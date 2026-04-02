@@ -11,20 +11,28 @@ function manejarEnvio(evento) {
     evento.preventDefault();
 
     //Obtengo los datos del formulario y los guardo en un objeto litera JSON
-    const datos = {
+    const nuevoTaller = {
         nombre: document.getElementById("nombre").value,
         email: document.getElementById("email").value,
         nombreTaller: document.getElementById("nombreTaller").value,
         descripcion: document.getElementById("descripcion").value
     };
-    console.log("datos a enviar", datos);
-    enviarDatos(datos);
+    guardarEnDisco(nuevoTaller);
 
 }
 
-function enviarDatos(datos) {
-    console.log("Simulando envio de datos al servidor...");
-    alert("Formulario enviado con exito");
+function guardarEnDisco(taller) {
+    //Guardamos los datos en el localStorage
+    let talleresExistentes = JSON.parse(localStorage.getItem('talleres')) || [];
+    talleresExistentes.push(taller);
+    localStorage.setItem('talleres', JSON.stringify(talleresExistentes));
+    //Le aviso al usuario
+alert("Taller registrado con exito!");
+
+//redirijo a la pagina de busqueda
+window.location.href = "busqueda.html";
+
 }
+
 
 main();
