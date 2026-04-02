@@ -10,12 +10,19 @@ function manejarEnvio(evento) {
     //Evito que se envie el formulario
     evento.preventDefault();
 
-    //Obtengo los datos del formulario y los guardo en un objeto litera JSON
+    //Obtengo los datos del formulario y los guardo en un objeto que taller
     const nuevoTaller = {
         nombre: document.getElementById("nombre").value,
+        telefono: document.getElementById("telefono").value,
+        direccion: document.getElementById("direccion").value,
+        horarioAtencion: document.getElementById("horarioAtencion").value,
+        rubro: document.getElementById("rubro").value,
+        redSocial: document.getElementById("redSocial").value,
         email: document.getElementById("email").value,
         nombreTaller: document.getElementById("nombreTaller").value,
-        descripcion: document.getElementById("descripcion").value
+        descripcion: document.getElementById("descripcion").value,
+        //Por defecto el taller arranca sin estar autorizado
+        autorizado: false
     };
     guardarEnDisco(nuevoTaller);
 

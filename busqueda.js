@@ -26,6 +26,8 @@ function listarTalleres() {
 
     //Recorremos el arreglo de talleres y los mostramos en la lista
     talleres.forEach(taller => {
+          //Solo mostramos el taller si esta autorizado
+          if(taller.autorizado) {
         //Creo el elemento de lista
         const item = document.createElement("li");
 
@@ -34,6 +36,7 @@ function listarTalleres() {
 
         //Agrego el item a la lista
         lista.append(item);
+          }
     });
 }
 
