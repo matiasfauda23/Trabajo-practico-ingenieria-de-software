@@ -2,7 +2,7 @@ function main() {
     const formulario = document.getElementById("form-taller");
 
     //Escucho el evento y llamamos a la funcion especifica
-    formulario.addEventListener( "submit", manejarEnvio );
+    formulario.addEventListener("submit", manejarEnvio);
 }
 
 //Funcion que procesa el evento
@@ -27,10 +27,10 @@ function guardarEnDisco(taller) {
     talleresExistentes.push(taller);
     localStorage.setItem('talleres', JSON.stringify(talleresExistentes));
     //Le aviso al usuario
-alert("Taller registrado con exito!");
+    alert("Taller registrado con exito!");
 
-//redirijo a la pagina de busqueda
-window.location.href = "busqueda.html";
+    //redirijo a la pagina de busqueda
+    window.location.href = "busqueda.html";
 
 }
 

@@ -1,10 +1,10 @@
-function cargarPagina(){
+function cargarPagina() {
     iniciarMapa();
     listarTalleres();
 }
 
 
-function iniciarMapa(){
+function iniciarMapa() {
     //Creamos el mapa
     const miMapa = L.map('mapa').setView([-34.52, -58.70], 13);
 
