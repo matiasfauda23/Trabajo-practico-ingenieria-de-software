@@ -1,35 +1,30 @@
 <!doctype html>
 <html lang="en">
-  <head>
+
+<head>
     <title>Document</title>
     <link rel="stylesheet" href="estilos.css" />
-  </head>
-  <body>
+</head>
+
+<body>
     <h1>Registro de colaboradores</h1>
     <p>Completa los datos para difundir tu taller en la comunidad.</p>
 
     <form id="form-taller">
-      <input
-        type="text"
-        id="nombre"
-        placeholder="Nombre del colaborador"
-        required
-      />
-      <input type="text" id="email" placeholder="Correo electrónico" required />
-      <input
-        type="text"
-        id="nombreTaller"
-        placeholder="Nombre del taller"
-        required
-      />
-      <textarea
-        id="descripcion"
-        placeholder="¿De que trata el taller?"
-      ></textarea>
+        <input type="text" id="nombre" placeholder="Nombre del colaborador" required />
+        <input type="text" id="telefono" placeholder="Telefono" required/>
+        <input type="text" id="email" placeholder="Correo electrónico" required />
+        <input type="text" id="nombreTaller" placeholder="Nombre del taller" required />
+        <input type="text" id="direccion" placeholder="Direccion" required />
+        <input type="text" id="horarioAtencion" placeholder="Horario de atencion" required />
+        <input type="text" id="rubro" placeholder="Rubro" required />
+        <input type="text" id="redSocial" placeholder="Red social" required />
+        <textarea id="descripcion" placeholder="¿De que trata el taller?"></textarea>
 
-      <button type="submit">Registrar Taller</button>
+        <button type="submit">Registrar Taller</button>
     </form>
 
     <script src="inscripcion.js"></script>
-  </body>
+</body>
+
 </html>
