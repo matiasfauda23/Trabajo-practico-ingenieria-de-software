@@ -23,11 +23,38 @@ body {
 }
 
 /* Espaciado para los elementos */
-input, textarea, button {
+input, textarea, button, select {
     margin-bottom: 10px;    /* Espacio entre cada cajita */
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
+}
+
+#filtros-busqueda {
+    width: 90%;
+    max-width: 800px;
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#filtro-nombre,
+#filtro-categoria {
+    margin-bottom: 0;
+}
+
+#filtro-nombre {
+    flex: 2;
+}
+
+#filtro-categoria {
+    flex: 1;
+}
+
+@media (max-width: 600px) {
+    #filtros-busqueda {
+        flex-direction: column;
+    }
 }
 
 /* Estilo para el boton */
