@@ -91,3 +91,35 @@ button {
     background-color: #eee; 
     margin-bottom: 30px;
 }
+
+
+
+/*inicio*/
+.contenedor{
+    display: flex;
+    justify-content: center; 
+    gap: 100px;
+    width: 8000px;
+    height: 1000000;
+
+}
+
+.articulo {
+    padding: 10px;
+    margin: 15px;
+    box-shadow: 5px 5px 5px 5px;
+}
+
+.articulo:hover {
+    background: cadetblue;
+}
+
+#explorar{
+    padding: 10px 100px;
+    margin: 15px;
+}
+
+#Registrar{
+    padding: 10px 95px;
+    margin: 15px;
+}
