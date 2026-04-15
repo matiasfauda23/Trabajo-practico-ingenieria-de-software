@@ -98,69 +98,61 @@ function inicializarFiltros() {
 
 // Muestra en pantalla solo los talleres que cumplen los filtros.
 function listarTalleres() {
-  // Refrescamos la variable talleres desde la mock para mantener el comportamiento
-  // de maqueta estática en caso de que datos.js cambie durante la sesión.
-  if (typeof TALLERES_MOCK !== "undefined" && Array.isArray(TALLERES_MOCK)) {
-    talleres = TALLERES_MOCK.slice();
-  } else {
-    talleres = [];
+  // Obtenemos los datos
+  const datosBase = typeof TALLERES_MOCK !== "undefined" ? TALLERES_MOCK : [];
+
+  // Obtenemos los criterios de busqueda
+  const texto = document.getElementById("filtro-nombre").value;
+  const categoria = document.getElementById("filtro-categoria").value;
+
+  // Ejecuto la logica
+  const resultados = filtrarTalleres(datosBase, texto, categoria);
+
+  // Dibujamos
+  dibujarLista(resultados);
+  actualizarMarcadoresEnMapa(resultados);
+}
+
+function dibujarLista(listaFiltrada) {
+  const contenedorLista = document.getElementById("lista-talleres");
+  contenedorLista.innerHTML = "";
+
+  // Si no hay nada mostramos el mensaje de error
+  if (listaFiltrada.length === 0) {
+    const item = document.createElement("li");
+    item.textContent = "No hay talleres que coincidan con los filtros.";
+    contenedorLista.append(item);
+    return;
   }
+  // Si hay datos entonces creamos los items
+  listaFiltrada.forEach((taller) => {
+    const item = document.createElement("li");
+    item.textContent = `${taller.nombreTaller} - ${taller.descripcion || ""}`;
+    contenedorLista.append(item);
+  });
+}
 
-  // Tomamos la lista visual y los valores de filtros actuales.
-  const lista = document.getElementById("lista-talleres");
-  const nombreBuscado = normalizarTexto(
-    document.getElementById("filtro-nombre").value,
-  );
-  const categoriaSeleccionada =
-    document.getElementById("filtro-categoria").value;
-
-  // Limpiamos la lista antes de volver a cargar resultados.
-  lista.innerHTML = "";
-
-  // Filtramos por:
-  // 1) taller autorizado
-  // 2) texto del buscador (nombre del taller o colaborador)
-  // 3) categoria elegida
-  const talleresFiltrados = (talleres || []).filter((taller) => {
+function filtrarTalleres(lista, textoBusqueda, categoriaSeleccionada) {
+  const busquedaCriterio = normalizarTexto(textoBusqueda);
+  //Filtro la lista
+  const resultados = (lista || []).filter((taller) => {
     if (!taller || !taller.autorizado) {
       return false;
     }
-
     const nombreTaller = normalizarTexto(taller.nombreTaller);
-    const nombreColaborador = normalizarTexto(taller.nombre);
+    const nombreColaborador = normalizarTexto(taller.nombreColaborador);
+
     const coincideNombre =
-      !nombreBuscado ||
-      nombreTaller.includes(nombreBuscado) ||
-      nombreColaborador.includes(nombreBuscado);
+      !busquedaCriterio ||
+      nombreTaller.includes(busquedaCriterio) ||
+      nombreColaborador.includes(busquedaCriterio);
+
     const coincideCategoria =
       !categoriaSeleccionada || taller.rubro === categoriaSeleccionada;
 
     return coincideNombre && coincideCategoria;
   });
-
-  // Si no hay coincidencias, mostramos un mensaje simple.
-  if (!talleresFiltrados || talleresFiltrados.length === 0) {
-    const item = document.createElement("li");
-    item.textContent = "No hay talleres que coincidan con los filtros.";
-    lista.append(item);
-    actualizarMarcadoresEnMapa([]);
-    return;
-  }
-
-  // Recorremos los talleres filtrados y los mostramos en pantalla.
-  talleresFiltrados.forEach((taller) => {
-    // Creamos una fila de la lista.
-    const item = document.createElement("li");
-
-    // Mostramos nombre del taller y descripcion.
-    item.append(taller.nombreTaller + " - " + (taller.descripcion || ""));
-
-    // Agregamos esa fila a la lista final.
-    lista.append(item);
-  });
-
-  // Actualizamos el mapa para mostrar solo talleres filtrados.
-  actualizarMarcadoresEnMapa(talleresFiltrados);
+  return resultados;
 }
 
 // Dibuja en el mapa los talleres que tienen coordenadas validas.
