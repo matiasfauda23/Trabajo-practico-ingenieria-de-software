@@ -1,26 +1,32 @@
 <!doctype html>
 <html lang="en">
+    <head>
+        <link
+            rel="stylesheet"
+            href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        />
+        <link rel="stylesheet" href="estilos.css" />
+    </head>
 
-<head>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <link rel="stylesheet" href="estilos.css" />
-</head>
+    <body>
+        <h1>Busqueda de talleres</h1>
 
-<body>
-  <h1>Busqueda de talleres</h1>
+        <section id="filtros-busqueda">
+            <input
+                type="text"
+                id="filtro-nombre"
+                placeholder="Buscar por nombre del taller"
+            />
+            <select id="filtro-categoria">
+                <option value="">Todas las categorias</option>
+            </select>
+        </section>
 
-  <section id="filtros-busqueda">
-    <input type="text" id="filtro-nombre" placeholder="Buscar por nombre del taller" />
-    <select id="filtro-categoria">
-      <option value="">Todas las categorias</option>
-    </select>
-  </section>
+        <div id="mapa"></div>
+        <ul id="lista-talleres"></ul>
 
-  <div id="mapa"></div>
-  <ul id="lista-talleres"></ul>
-
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="busqueda.js"></script>
-</body>
-
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <script src="datos.js"></script>
+        <script src="busqueda.js"></script>
+    </body>
 </html>

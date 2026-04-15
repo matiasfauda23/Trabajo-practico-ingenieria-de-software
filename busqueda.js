@@ -1,5 +1,6 @@
-// Lista general de talleres cargados desde el navegador.
+// Lista general de talleres (provista por datos.js -> TALLERES_MOCK)
 let talleres = [];
+
 // Guardamos el mapa para poder actualizarlo despues.
 let miMapa = null;
 // Guardamos una capa especial para manejar los marcadores.
@@ -7,24 +8,17 @@ let capaMarcadores = null;
 
 // Punto de inicio de la pagina de busqueda.
 function cargarPagina() {
-  // Cargamos los talleres guardados en localStorage.
-  talleres = obtenerTalleres();
+  // Tomamos los datos desde la constante TALLERES_MOCK proporcionada por datos.js.
+  // Si no existe, usamos array vacío para no romper la maqueta.
+  talleres =
+    typeof TALLERES_MOCK !== "undefined" && Array.isArray(TALLERES_MOCK)
+      ? TALLERES_MOCK.slice()
+      : [];
 
   // Encendemos el mapa, armamos los filtros y mostramos la lista inicial.
   iniciarMapa();
   inicializarFiltros();
   listarTalleres();
-}
-
-// Lee los talleres guardados en localStorage.
-function obtenerTalleres() {
-  try {
-    // Si hay datos, los devuelve; si no, devuelve lista vacia.
-    return JSON.parse(localStorage.getItem("talleres")) || [];
-  } catch (error) {
-    // Si hay un error en los datos, evitamos que la pagina se rompa.
-    return [];
-  }
 }
 
 // Convierte un texto para compararlo mas facil.
@@ -38,7 +32,7 @@ function normalizarTexto(valor) {
     .trim();
 }
 
-// Crea el mapa de Leaflet y agrega un marcador de ejemplo.
+// Crea el mapa de Leaflet y agrega una capa para marcadores.
 function iniciarMapa() {
   // Si Leaflet no cargo, no intentamos crear el mapa.
   if (typeof L === "undefined") {
@@ -48,26 +42,40 @@ function iniciarMapa() {
   // Creamos el mapa y elegimos una posicion inicial.
   miMapa = L.map("mapa").setView([-34.52, -58.7], 13);
 
-  // Cargamos el fondo del mapa desde OpenStreetMap.
-  L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
-    attribution: "© OpenStreetMap",
-  }).addTo(miMapa);
+  // Usamos liberia Leaflet y integramos los mapas con CartoDB
+  L.tileLayer(
+    "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
+    {
+      attribution:
+        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+      subdomains: "abcd",
+      maxZoom: 20,
+    },
+  ).addTo(miMapa); // Asegurate que el nombre 'miMapa' coincida con tu variable
 
   // Capa donde vamos a poner y actualizar los marcadores.
   capaMarcadores = L.layerGroup().addTo(miMapa);
 }
 
-//Creamos y llenamos rellenamos los filtros
+// Prepara los filtros de nombre y categoria.
 function inicializarFiltros() {
   // Tomamos los elementos de la pantalla.
   const inputNombre = document.getElementById("filtro-nombre");
   const selectCategoria = document.getElementById("filtro-categoria");
 
+  // Limpiamos el select (dejamos la opción por defecto) para evitar duplicados
+  // si la función se ejecuta varias veces durante la sesión.
+  if (selectCategoria) {
+    while (selectCategoria.options.length > 1) {
+      selectCategoria.remove(1);
+    }
+  }
+
   // Armamos una lista de categorias sin repetir,
   // usando solo talleres autorizados.
   const categoriasUnicas = [
     ...new Set(
-      talleres
+      (talleres || [])
         .filter((taller) => taller.autorizado && taller.rubro)
         .map((taller) => taller.rubro),
     ),
@@ -83,14 +91,20 @@ function inicializarFiltros() {
 
   // Cada vez que se escribe o se cambia categoria,
   // volvemos a dibujar la lista automaticamente.
-  inputNombre.addEventListener("input", listarTalleres);
-  selectCategoria.addEventListener("change", listarTalleres);
+  if (inputNombre) inputNombre.addEventListener("input", listarTalleres);
+  if (selectCategoria)
+    selectCategoria.addEventListener("change", listarTalleres);
 }
 
 // Muestra en pantalla solo los talleres que cumplen los filtros.
 function listarTalleres() {
-  // Leemos de nuevo localStorage para trabajar con datos actuales.
-  talleres = obtenerTalleres();
+  // Refrescamos la variable talleres desde la mock para mantener el comportamiento
+  // de maqueta estática en caso de que datos.js cambie durante la sesión.
+  if (typeof TALLERES_MOCK !== "undefined" && Array.isArray(TALLERES_MOCK)) {
+    talleres = TALLERES_MOCK.slice();
+  } else {
+    talleres = [];
+  }
 
   // Tomamos la lista visual y los valores de filtros actuales.
   const lista = document.getElementById("lista-talleres");
@@ -107,8 +121,8 @@ function listarTalleres() {
   // 1) taller autorizado
   // 2) texto del buscador (nombre del taller o colaborador)
   // 3) categoria elegida
-  const talleresFiltrados = talleres.filter((taller) => {
-    if (!taller.autorizado) {
+  const talleresFiltrados = (talleres || []).filter((taller) => {
+    if (!taller || !taller.autorizado) {
       return false;
     }
 
@@ -117,15 +131,15 @@ function listarTalleres() {
     const coincideNombre =
       !nombreBuscado ||
       nombreTaller.includes(nombreBuscado) ||
-      nombreColaborador.includes(nombreBuscado);   
-    const coincideCategoria = 
+      nombreColaborador.includes(nombreBuscado);
+    const coincideCategoria =
       !categoriaSeleccionada || taller.rubro === categoriaSeleccionada;
 
     return coincideNombre && coincideCategoria;
   });
 
   // Si no hay coincidencias, mostramos un mensaje simple.
-  if (talleresFiltrados.length === 0) {
+  if (!talleresFiltrados || talleresFiltrados.length === 0) {
     const item = document.createElement("li");
     item.textContent = "No hay talleres que coincidan con los filtros.";
     lista.append(item);
@@ -139,7 +153,7 @@ function listarTalleres() {
     const item = document.createElement("li");
 
     // Mostramos nombre del taller y descripcion.
-    item.append(taller.nombreTaller + " - " + taller.descripcion);
+    item.append(taller.nombreTaller + " - " + (taller.descripcion || ""));
 
     // Agregamos esa fila a la lista final.
     lista.append(item);
@@ -161,7 +175,7 @@ function actualizarMarcadoresEnMapa(talleresFiltrados) {
 
   const marcadoresValidos = [];
 
-  talleresFiltrados.forEach((taller) => {
+  (talleresFiltrados || []).forEach((taller) => {
     // Tomamos latitud y longitud guardadas al registrar el taller.
     const latitud = Number(taller.latitud);
     const longitud = Number(taller.longitud);
