@@ -1,200 +1,58 @@
-// Lista general de talleres (provista por datos.js -> TALLERES_MOCK)
+// Importo lo necesario de otros modulos
+import { filtrarTalleres } from "./js/modelo.js";
+import { iniciarMapa, dibujarLista, actualizarMapa } from "./js/vista.js";
+
+// Lista local para manejar los datos en este archivo
 let talleres = [];
 
-// Guardamos el mapa para poder actualizarlo despues.
-let miMapa = null;
-// Guardamos una capa especial para manejar los marcadores.
-let capaMarcadores = null;
-
-// Punto de inicio de la pagina de busqueda.
 function cargarPagina() {
-  // Tomamos los datos desde la constante TALLERES_MOCK proporcionada por datos.js.
-  // Si no existe, usamos array vacío para no romper la maqueta.
-  talleres =
-    typeof TALLERES_MOCK !== "undefined" && Array.isArray(TALLERES_MOCK)
-      ? TALLERES_MOCK.slice()
-      : [];
-
-  // Encendemos el mapa, armamos los filtros y mostramos la lista inicial.
+  talleres = typeof TALLERES_MOCK !== "undefined" ? TALLERES_MOCK.slice() : [];
   iniciarMapa();
   inicializarFiltros();
   listarTalleres();
 }
 
-// Convierte un texto para compararlo mas facil.
-// Sirve para ignorar mayusculas, minusculas y tildes.
-function normalizarTexto(valor) {
-  return (valor || "")
-    .toString()
-    .toLowerCase()
-    .normalize("NFD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .trim();
-}
-
-// Crea el mapa de Leaflet y agrega una capa para marcadores.
-function iniciarMapa() {
-  // Si Leaflet no cargo, no intentamos crear el mapa.
-  if (typeof L === "undefined") {
-    return;
-  }
-
-  // Creamos el mapa y elegimos una posicion inicial.
-  miMapa = L.map("mapa").setView([-34.52, -58.7], 13);
-
-  // Usamos liberia Leaflet y integramos los mapas con CartoDB
-  L.tileLayer(
-    "https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png",
-    {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
-      subdomains: "abcd",
-      maxZoom: 20,
-    },
-  ).addTo(miMapa); // Asegurate que el nombre 'miMapa' coincida con tu variable
-
-  // Capa donde vamos a poner y actualizar los marcadores.
-  capaMarcadores = L.layerGroup().addTo(miMapa);
-}
-
-// Prepara los filtros de nombre y categoria.
 function inicializarFiltros() {
-  // Tomamos los elementos de la pantalla.
   const inputNombre = document.getElementById("filtro-nombre");
   const selectCategoria = document.getElementById("filtro-categoria");
 
-  // Limpiamos el select (dejamos la opción por defecto) para evitar duplicados
-  // si la función se ejecuta varias veces durante la sesión.
-  if (selectCategoria) {
-    while (selectCategoria.options.length > 1) {
-      selectCategoria.remove(1);
-    }
-  }
-
-  // Armamos una lista de categorias sin repetir,
-  // usando solo talleres autorizados.
+  // Cargamos las categorias en el select
   const categoriasUnicas = [
     ...new Set(
-      (talleres || [])
-        .filter((taller) => taller.autorizado && taller.rubro)
-        .map((taller) => taller.rubro),
+      talleres.filter((t) => t.autorizado && t.rubro).map((t) => t.rubro),
     ),
-  ].sort((a, b) => a.localeCompare(b));
+  ].sort();
 
-  // Cargamos cada categoria en el desplegable.
-  categoriasUnicas.forEach((categoria) => {
-    const opcion = document.createElement("option");
-    opcion.value = categoria;
-    opcion.textContent = categoria;
-    selectCategoria.append(opcion);
+  categoriasUnicas.forEach((cat) => {
+    const opt = document.createElement("option");
+    opt.value = cat;
+    opt.textContent = cat;
+    selectCategoria?.append(opt);
   });
 
-  // Cada vez que se escribe o se cambia categoria,
-  // volvemos a dibujar la lista automaticamente.
-  if (inputNombre) inputNombre.addEventListener("input", listarTalleres);
-  if (selectCategoria)
-    selectCategoria.addEventListener("change", listarTalleres);
+  // Escuchamos los cambios para actualizar la lista
+  inputNombre?.addEventListener("input", listarTalleres);
+  selectCategoria?.addEventListener("change", listarTalleres);
 }
 
-// Muestra en pantalla solo los talleres que cumplen los filtros.
+// Esta es la función principal del controlador
 function listarTalleres() {
-  // Obtenemos los datos
-  const datosBase = typeof TALLERES_MOCK !== "undefined" ? TALLERES_MOCK : [];
+  // Tomamos los valores de la pantalla
+  const nombreBuscado = document.getElementById("filtro-nombre").value;
+  const categoriaSeleccionada =
+    document.getElementById("filtro-categoria").value;
 
-  // Obtenemos los criterios de busqueda
-  const texto = document.getElementById("filtro-nombre").value;
-  const categoria = document.getElementById("filtro-categoria").value;
+  // Pedimos al modelo que procese los datos
+  const filtrados = filtrarTalleres(
+    talleres,
+    nombreBuscado,
+    categoriaSeleccionada,
+  );
 
-  // Ejecuto la logica
-  const resultados = filtrarTalleres(datosBase, texto, categoria);
-
-  // Dibujamos
-  dibujarLista(resultados);
-  actualizarMarcadoresEnMapa(resultados);
+  // Le ordenamos a la vista que dibuje los resultados
+  dibujarLista(filtrados);
+  actualizarMapa(filtrados);
 }
 
-function dibujarLista(listaFiltrada) {
-  const contenedorLista = document.getElementById("lista-talleres");
-  contenedorLista.innerHTML = "";
-
-  // Si no hay nada mostramos el mensaje de error
-  if (listaFiltrada.length === 0) {
-    const item = document.createElement("li");
-    item.textContent = "No hay talleres que coincidan con los filtros.";
-    contenedorLista.append(item);
-    return;
-  }
-  // Si hay datos entonces creamos los items
-  listaFiltrada.forEach((taller) => {
-    const item = document.createElement("li");
-    item.textContent = `${taller.nombreTaller} - ${taller.descripcion || ""}`;
-    contenedorLista.append(item);
-  });
-}
-
-function filtrarTalleres(lista, textoBusqueda, categoriaSeleccionada) {
-  const busquedaCriterio = normalizarTexto(textoBusqueda);
-  //Filtro la lista
-  const resultados = (lista || []).filter((taller) => {
-    if (!taller || !taller.autorizado) {
-      return false;
-    }
-    const nombreTaller = normalizarTexto(taller.nombreTaller);
-    const nombreColaborador = normalizarTexto(taller.nombreColaborador);
-
-    const coincideNombre =
-      !busquedaCriterio ||
-      nombreTaller.includes(busquedaCriterio) ||
-      nombreColaborador.includes(busquedaCriterio);
-
-    const coincideCategoria =
-      !categoriaSeleccionada || taller.rubro === categoriaSeleccionada;
-
-    return coincideNombre && coincideCategoria;
-  });
-  return resultados;
-}
-
-// Dibuja en el mapa los talleres que tienen coordenadas validas.
-function actualizarMarcadoresEnMapa(talleresFiltrados) {
-  // Si el mapa no existe (por ejemplo, sin internet), salimos.
-  if (!miMapa || !capaMarcadores) {
-    return;
-  }
-
-  // Limpiamos marcadores anteriores para no duplicarlos.
-  capaMarcadores.clearLayers();
-
-  const marcadoresValidos = [];
-
-  (talleresFiltrados || []).forEach((taller) => {
-    // Tomamos latitud y longitud guardadas al registrar el taller.
-    const latitud = Number(taller.latitud);
-    const longitud = Number(taller.longitud);
-
-    // Solo agregamos marcadores con coordenadas reales.
-    if (!Number.isFinite(latitud) || !Number.isFinite(longitud)) {
-      return;
-    }
-
-    // Creamos el marcador en el mapa y mostramos el nombre al hacer clic.
-    const marcador = L.marker([latitud, longitud]).addTo(capaMarcadores);
-    marcador.bindPopup(taller.nombreTaller || "Taller");
-
-    // Lo guardamos para despues ajustar el zoom automaticamente.
-    marcadoresValidos.push(marcador);
-  });
-
-  // Si no hay coordenadas, volvemos a la vista inicial.
-  if (marcadoresValidos.length === 0) {
-    miMapa.setView([-34.52, -58.7], 13);
-    return;
-  }
-
-  // Ajustamos el zoom para que se vean todos los marcadores.
-  const grupo = L.featureGroup(marcadoresValidos);
-  miMapa.fitBounds(grupo.getBounds().pad(0.2));
-}
-
-// Cuando la pagina termina de cargar, arrancamos todo.
+// Arrancamos todo
 window.addEventListener("load", cargarPagina);
