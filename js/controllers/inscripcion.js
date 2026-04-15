@@ -1,9 +1,10 @@
 // Controlador
+// En js/controllers/inscripcion.js
 import {
   obtenerDatosFormulario,
   mostrarAlerta,
-} from "./modules/inscripcionVista.js";
-import { obtenerCoordenadas } from "./modules/geocodingService.js";
+} from "../views/inscripcionVista.js";
+import { obtenerCoordenadas } from "../services/geocodingService.js";
 
 async function manejarEnvio(evento) {
   evento.preventDefault();

@@ -1,6 +1,6 @@
 // Importo lo necesario de otros modulos
-import { filtrarTalleres } from "./modules/modelo.js";
-import { iniciarMapa, dibujarLista, actualizarMapa } from "./modules/vista.js";
+import { filtrarTalleres } from "../models/modelo.js";
+import { iniciarMapa, dibujarLista, actualizarMapa } from "../views/vista.js";
 
 //Controlador: Coordina la interaccion entre modelo.js y vista.js
 
