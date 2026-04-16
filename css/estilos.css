@@ -1,11 +1,11 @@
 /*Centramos todo el contenido en el centro de la página*/
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
     flex-direction: column; /* ponemos el titulo texto y formulario uno abajo del otro */
-    align-items: center;    
-    justify-content: center; 
-    min-height: 100vh;      /* Hace que el cuerpo ocupe toda la pantalla */
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh; /* Hace que el cuerpo ocupe toda la pantalla */
     margin: 0;
     background-color: #f8f9fa;
     color: #333;
@@ -15,16 +15,19 @@ body {
 #form-taller {
     display: flex;
     flex-direction: column; /* Acomodo los inputs verticalmente */
-    width: 300px;           
+    width: 300px;
     background: white;
     padding: 20px;
     border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
 }
 
 /* Espaciado para los elementos */
-input, textarea, button, select {
-    margin-bottom: 10px;    /* Espacio entre cada cajita */
+input,
+textarea,
+button,
+select {
+    margin-bottom: 10px; /* Espacio entre cada cajita */
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -68,7 +71,7 @@ button {
 #lista-talleres {
     width: 90%;
     max-width: 800px;
-    list-style: none; 
+    list-style: none;
     padding: 0;
 }
 
@@ -77,31 +80,28 @@ button {
     margin-bottom: 10px;
     padding: 15px;
     border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-    border-left: 5px solid #007bff; 
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    border-left: 5px solid #007bff;
 }
 
-#mapa { 
-    height: 450px; 
-    width: 90%;      /* Casi todo el ancho de la pantalla */
-    max-width: 800px; 
-    border: 2px solid #ccc; 
+#mapa {
+    height: 450px;
+    width: 90%; /* Casi todo el ancho de la pantalla */
+    max-width: 800px;
+    border: 2px solid #ccc;
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    background-color: #eee; 
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #eee;
     margin-bottom: 30px;
 }
 
-
-
 /*inicio*/
-.contenedor{
+.contenedor {
     display: flex;
-    justify-content: center; 
+    justify-content: center;
     gap: 100px;
     width: 8000px;
     height: 1000000;
-
 }
 
 .articulo {
@@ -114,12 +114,116 @@ button {
     background: cadetblue;
 }
 
-#explorar{
+#explorar {
     padding: 10px 100px;
     margin: 15px;
 }
 
-#Registrar{
+#Registrar {
     padding: 10px 95px;
     margin: 15px;
+}
+
+/* ========== PANEL DETALLE ESTILO GOOGLE MAPS ========== */
+
+/* El panel arranca oculto fuera de la pantalla (a la izquierda) */
+#panel-detalle {
+    position: fixed;
+    top: 0;
+    left: -400px; /* Empieza fuera de la pantalla */
+    width: 360px;
+    height: 100%;
+    background: white;
+    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
+    padding: 24px;
+    z-index: 1000; /* Se pone encima del mapa */
+    overflow-y: auto; /* Scroll si el contenido es largo */
+    transition: left 0.3s ease; /* Animación al abrir/cerrar */
+    box-sizing: border-box;
+}
+
+/* Cuando tiene esta clase, el panel entra desde la izquierda */
+#panel-detalle.panel-abierto {
+    left: 0;
+}
+
+/* Botón de cerrar arriba a la derecha del panel */
+#btn-cerrar-panel {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #666;
+}
+
+#btn-cerrar-panel:hover {
+    color: #000;
+}
+
+/* Título del taller */
+#panel-detalle h2 {
+    margin-top: 0;
+    font-size: 22px;
+    color: #1a1a1a;
+}
+
+/* Rubro con estilo de etiqueta */
+.panel-rubro {
+    color: #555;
+    font-size: 14px;
+    margin-bottom: 12px;
+}
+
+/* Separador */
+#panel-detalle hr {
+    border: none;
+    border-top: 1px solid #e0e0e0;
+    margin: 12px 0;
+}
+
+/* Cada línea de info */
+#panel-detalle p {
+    font-size: 14px;
+    color: #333;
+    margin: 8px 0;
+}
+
+/* Links dentro del panel */
+#panel-detalle a {
+    color: #1a73e8; /* Azul estilo Google */
+    text-decoration: none;
+}
+
+#panel-detalle a:hover {
+    text-decoration: underline;
+}
+
+/* ========== TARJETAS DE LA LISTA ========== */
+
+/* Cada taller en la lista se ve como una tarjeta clickeable */
+.tarjeta-taller {
+    list-style: none;
+    padding: 12px 16px;
+    border-bottom: 1px solid #e0e0e0;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.tarjeta-taller:hover {
+    background-color: #f5f5f5;
+}
+
+.tarjeta-taller strong {
+    font-size: 15px;
+    color: #1a1a1a;
+}
+
+.tarjeta-taller span {
+    font-size: 13px;
+    color: #777;
 }

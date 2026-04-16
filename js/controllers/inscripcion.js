@@ -3,6 +3,7 @@
 import {
   obtenerDatosFormulario,
   mostrarAlerta,
+  leerFoto,
 } from "../views/inscripcionVista.js";
 import { obtenerCoordenadas } from "../services/geocodingService.js";
 
@@ -26,6 +27,13 @@ async function manejarEnvio(evento) {
   const coords = await obtenerCoordenadas(nuevoTaller.direccion);
   nuevoTaller.latitud = coords.latitud;
   nuevoTaller.longitud = coords.longitud;
+
+  // Esperamos a que se lea la foto antes de guardar
+  nuevoTaller.foto = await leerFoto();
+  // "borrar?"Guardamos el taller en localStorage
+  let talleresExistentes = JSON.parse(localStorage.getItem("talleres")) || [];
+  talleresExistentes.push(nuevoTaller);
+  localStorage.setItem("talleres", JSON.stringify(talleresExistentes));
 
   // Finalizar flujo
   mostrarAlerta("Taller cargado correctamente");
