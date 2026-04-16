@@ -20,3 +20,11 @@ export function filtrarTalleres(lista, textoBusqueda, categoriaSeleccionada) {
     return coincideNombre && coincideCategoria;
   });
 }
+
+export function obtenerRubrosUnicos(lista) {
+  return [
+    ...new Set(
+      (lista || []).filter((t) => t.autorizado && t.rubro).map((t) => t.rubro),
+    ),
+  ].sort((a, b) => a.localeCompare(b));
+}

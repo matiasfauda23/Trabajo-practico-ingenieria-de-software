@@ -52,3 +52,18 @@ export function actualizarMapa(talleresFiltrados) {
     miMapa.fitBounds(grupo.getBounds().pad(0.2));
   }
 }
+
+export function configurarSelectorCategorias(rubros) {
+  const select = document.getElementById("filtro-categoria");
+
+  // Limpiar el select dejando solo la primera opcion
+  select.innerHTML = '<option value="">Todas las categorías</option>';
+
+  // Recorrer y agregar
+  rubros.forEach((rubro) => {
+    const option = document.createElement("option");
+    option.value = rubro;
+    option.textContent = rubro;
+    select.appendChild(option);
+  });
+}

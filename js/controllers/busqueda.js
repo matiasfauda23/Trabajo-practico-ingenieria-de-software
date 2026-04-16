@@ -1,6 +1,11 @@
 // Importo lo necesario de otros modulos
-import { filtrarTalleres } from "../models/modelo.js";
-import { iniciarMapa, dibujarLista, actualizarMapa } from "../views/vista.js";
+import { filtrarTalleres, obtenerRubrosUnicos } from "../models/modelo.js";
+import {
+  iniciarMapa,
+  dibujarLista,
+  actualizarMapa,
+  configurarSelectorCategorias,
+} from "../views/vista.js";
 
 //Controlador: Coordina la interaccion entre modelo.js y vista.js
 
@@ -15,26 +20,19 @@ function cargarPagina() {
 }
 
 function inicializarFiltros() {
-  const inputNombre = document.getElementById("filtro-nombre");
-  const selectCategoria = document.getElementById("filtro-categoria");
+  // Obtenemos los datos
+  const rubros = obtenerRubrosUnicos(talleres);
 
-  // Cargamos las categorias en el select
-  const categoriasUnicas = [
-    ...new Set(
-      talleres.filter((t) => t.autorizado && t.rubro).map((t) => t.rubro),
-    ),
-  ].sort();
+  // Mandamos a dibujar
+  configurarSelectorCategorias(rubros);
 
-  categoriasUnicas.forEach((cat) => {
-    const opt = document.createElement("option");
-    opt.value = cat;
-    opt.textContent = cat;
-    selectCategoria?.append(opt);
-  });
-
-  // Escuchamos los cambios para actualizar la lista
-  inputNombre?.addEventListener("input", listarTalleres);
-  selectCategoria?.addEventListener("change", listarTalleres);
+  // Escuchamos los eventos
+  document
+    .getElementById("filtro-nombre")
+    .addEventListener("input", listarTalleres);
+  document
+    .getElementById("filtro-categoria")
+    .addEventListener("change", listarTalleres);
 }
 
 // Esta es la función principal del controlador
