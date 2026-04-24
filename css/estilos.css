@@ -1,38 +1,183 @@
-/*Centramos todo el contenido en el centro de la página*/
+/* ========== BASE ========== */
 body {
     font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
     display: flex;
-    flex-direction: column; /* ponemos el titulo texto y formulario uno abajo del otro */
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    min-height: 100vh; /* Hace que el cuerpo ocupe toda la pantalla */
+    min-height: 100vh;
     margin: 0;
-    background-color: #f8f9fa;
-    color: #333;
+    color: white;
+
+    /* Imagen de fondo */
+    background-image: url("fondo.png");
+    background-size: cover; /* cubre toda la pantalla */
+    background-position: center; /* centra la imagen */
+    background-repeat: no-repeat; /* no repite la imagen */
+    background-attachment: fixed; /* la imagen queda fija al hacer scroll */
 }
 
-/* Formulario con una columna vertical */
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45); /* oscurece un 45% */
+    z-index: 0;
+}
+
+/* Y esto para que el contenido quede por encima de la capa */
+body > * {
+    position: relative;
+    z-index: 1;
+}
+/* ========== TIPOGRAFÍA INICIO ========== */
+p1 {
+    display: block;
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #ffffff; /* blanco */
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6); /* sombra para legibilidad */
+    text-align: center;
+    letter-spacing: -0.5px;
+    margin: 1.5rem 0 0.5rem;
+}
+
+p2 {
+    display: block;
+    font-size: 1.3rem;
+    color: #f0f0f0; /* blanco suave */
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.7); /* sombra más intensa */
+    text-align: center;
+    max-width: 600px;
+    line-height: 1.7;
+    margin: 0.5rem 0;
+    padding: 0 1rem;
+}
+
+hr {
+    width: 90%;
+    max-width: 800px;
+    border: none;
+    border-top: 1.5px solid rgba(255, 255, 255, 0.3); /* hr semitransparente */
+    margin: 0.5rem 0;
+}
+
+/* ========== BOTONES INICIO ========== */
+button {
+    background-color: #2563eb;
+    color: white;
+    cursor: pointer;
+    font-weight: 600;
+    padding: 10px 36px;
+    border: none;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition:
+        background-color 0.2s,
+        transform 0.1s;
+}
+
+button:hover {
+    background-color: #1d4ed8;
+    transform: translateY(-1px);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+#explorar {
+    margin: 10px 8px;
+}
+
+#Registrar {
+    margin: 10px 8px;
+    background-color: transparent;
+    color: #2563eb;
+    border: 2px solid #2563eb;
+}
+
+#Registrar:hover {
+    background-color: #eff6ff;
+}
+
+/* ========== TARJETAS INICIO ========== */
+.contenedor {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+    width: 100%;
+    max-width: 800px;
+    padding: 1.5rem 1rem;
+}
+
+.articulo {
+    background: white;
+    border: 0.5px solid #e0e4eb;
+    border-radius: 14px;
+    padding: 1.25rem 1.5rem;
+    flex: 1;
+    min-width: 160px;
+    max-width: 220px;
+    transition:
+        box-shadow 0.2s,
+        transform 0.2s,
+        border-color 0.2s;
+    cursor: pointer;
+}
+
+.articulo h2 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a2e;
+    margin-bottom: 8px;
+}
+
+.articulo p {
+    font-size: 0.85rem;
+    color: #6b7280;
+    line-height: 1.5;
+    margin: 0;
+}
+
+.articulo:hover {
+    background: white;
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
+    transform: translateY(-4px);
+    border-color: #93c5fd;
+}
+
+/* ========== FORMULARIO ========== */
 #form-taller {
     display: flex;
-    flex-direction: column; /* Acomodo los inputs verticalmente */
+    flex-direction: column;
     width: 300px;
     background: white;
     padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* Espaciado para los elementos */
 input,
 textarea,
-button,
 select {
-    margin-bottom: 10px; /* Espacio entre cada cajita */
-    padding: 8px;
-    border: 1px solid #ccc;
-    border-radius: 4px;
+    margin-bottom: 10px;
+    padding: 9px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    font-size: 0.9rem;
+    transition: border-color 0.2s;
 }
 
+input:focus,
+textarea:focus,
+select:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+/* ========== FILTROS ========== */
 #filtros-busqueda {
     width: 90%;
     max-width: 800px;
@@ -58,96 +203,73 @@ select {
     #filtros-busqueda {
         flex-direction: column;
     }
+    .contenedor {
+        gap: 12px;
+    }
+    .articulo {
+        min-width: 140px;
+    }
 }
 
-/* Estilo para el boton */
-button {
-    background-color: #007bff;
-    color: white;
-    cursor: pointer;
-    font-weight: bold;
-}
-
+/* ========== LISTA DE TALLERES ========== */
 #lista-talleres {
     width: 90%;
     max-width: 800px;
     list-style: none;
     padding: 0;
+    margin: 0;
+    /* Configuración del scroll */
+    max-height: 400px; /* Altura máxima antes de scrollear */
+    overflow-y: auto; /* Activa el scroll vertical */
+    padding-right: 10px;
 }
 
 #lista-talleres li {
     background: white;
     margin-bottom: 10px;
     padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    border-left: 5px solid #007bff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+    border-left: 4px solid #2563eb;
+    transition: box-shadow 0.2s;
 }
 
+#lista-talleres li:hover {
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.1);
+}
+
+/* ========== MAPA ========== */
 #mapa {
     height: 450px;
-    width: 90%; /* Casi todo el ancho de la pantalla */
+    width: 90%;
     max-width: 800px;
-    border: 2px solid #ccc;
-    border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border: 1.5px solid #e0e4eb;
+    border-radius: 14px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     background-color: #eee;
     margin-bottom: 30px;
 }
 
-/*inicio*/
-.contenedor {
-    display: flex;
-    justify-content: center;
-    gap: 100px;
-    width: 8000px;
-    height: 1000000;
-}
-
-.articulo {
-    padding: 10px;
-    margin: 15px;
-    box-shadow: 5px 5px 5px 5px;
-}
-
-.articulo:hover {
-    background: cadetblue;
-}
-
-#explorar {
-    padding: 10px 100px;
-    margin: 15px;
-}
-
-#Registrar {
-    padding: 10px 95px;
-    margin: 15px;
-}
-
-/* ========== PANEL DETALLE ESTILO GOOGLE MAPS ========== */
-
-/* El panel arranca oculto fuera de la pantalla (a la izquierda) */
+/* ========== PANEL DETALLE ========== */
 #panel-detalle {
     position: fixed;
     top: 0;
-    left: -400px; /* Empieza fuera de la pantalla */
+    left: -400px;
     width: 360px;
     height: 100%;
     background: white;
-    box-shadow: 4px 0 16px rgba(0, 0, 0, 0.2);
+    box-shadow: 4px 0 20px rgba(0, 0, 0, 0.15);
     padding: 24px;
-    z-index: 1000; /* Se pone encima del mapa */
-    overflow-y: auto; /* Scroll si el contenido es largo */
-    transition: left 0.3s ease; /* Animación al abrir/cerrar */
+    z-index: 1000;
+    overflow-y: auto;
+    transition: left 0.3s ease;
     box-sizing: border-box;
 }
 
-/* Cuando tiene esta clase, el panel entra desde la izquierda */
 #panel-detalle.panel-abierto {
     left: 0;
 }
 
-/* Botón de cerrar arriba a la derecha del panel */
 #btn-cerrar-panel {
     position: absolute;
     top: 12px;
@@ -157,43 +279,44 @@ button {
     font-size: 18px;
     cursor: pointer;
     color: #666;
+    padding: 4px;
+    border-radius: 6px;
+    transition:
+        background 0.2s,
+        color 0.2s;
 }
 
 #btn-cerrar-panel:hover {
-    color: #000;
+    color: #1a1a2e;
+    background: #f4f6f9;
 }
 
-/* Título del taller */
 #panel-detalle h2 {
     margin-top: 0;
     font-size: 22px;
-    color: #1a1a1a;
+    color: #1a1a2e;
 }
 
-/* Rubro con estilo de etiqueta */
 .panel-rubro {
     color: #555;
     font-size: 14px;
     margin-bottom: 12px;
 }
 
-/* Separador */
 #panel-detalle hr {
     border: none;
-    border-top: 1px solid #e0e0e0;
+    border-top: 1px solid #e0e4eb;
     margin: 12px 0;
 }
 
-/* Cada línea de info */
 #panel-detalle p {
     font-size: 14px;
     color: #333;
     margin: 8px 0;
 }
 
-/* Links dentro del panel */
 #panel-detalle a {
-    color: #1a73e8; /* Azul estilo Google */
+    color: #2563eb;
     text-decoration: none;
 }
 
@@ -201,29 +324,34 @@ button {
     text-decoration: underline;
 }
 
-/* ========== TARJETAS DE LA LISTA ========== */
-
-/* Cada taller en la lista se ve como una tarjeta clickeable */
+/* ========== TARJETAS LISTA ========== */
 .tarjeta-taller {
     list-style: none;
     padding: 12px 16px;
-    border-bottom: 1px solid #e0e0e0;
+    border-bottom: 1px solid #e0e4eb;
     cursor: pointer;
     display: flex;
     flex-direction: column;
     gap: 4px;
+    transition: background 0.15s;
 }
 
 .tarjeta-taller:hover {
-    background-color: #f5f5f5;
+    background-color: #f4f6f9;
 }
 
 .tarjeta-taller strong {
     font-size: 15px;
-    color: #1a1a1a;
+    color: #1a1a2e;
 }
 
 .tarjeta-taller span {
     font-size: 13px;
     color: #777;
+}
+
+.taller-activo {
+    background-color: #fff9db !important; /* Amarillo pastel */
+    border-left: 5px solid #fab005; /* Naranja/Amarillo fuerte */
+    transition: all 0.3s ease;
 }

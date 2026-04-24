@@ -29,19 +29,45 @@ export function dibujarLista(talleresFiltrados) {
 
   talleresFiltrados.forEach((taller) => {
     const item = document.createElement("li");
-    // Agrego clase para poder darle estilo de tarjeta clickeable
     item.classList.add("tarjeta-taller");
 
-    // Strong Sirve para resaltar texto (por defecto se ve en negrita)
-    // span Se usa para aplicar estilos o agrupar texto
+    // Generamos el ID de forma consistente
+    const idUnico = taller.id || taller.nombreTaller.replace(/\s+/g, "-");
+    item.id = `item-taller-${idUnico}`;
+
     item.innerHTML = `
-       <strong>${taller.nombreTaller}</strong>
-       <span>${taller.rubro || ""}</span>
+        <strong>${taller.nombreTaller}</strong>
+        <span>${taller.rubro || ""}</span>
+        <span>${taller.horarioAtencion || ""}</span>
      `;
-    // Al hacer click en la tarjeta, abro el panel con la info del taller
-    item.addEventListener("click", () => abrirPanel(taller));
+
+    item.addEventListener("click", () => {
+      if (miMapa) {
+        miMapa.setView([Number(taller.latitud), Number(taller.longitud)], 16);
+      }
+
+      //Llamamos al nombre correcto de la funcion y pasamos el ID
+      resaltarEnLista(idUnico);
+      abrirPanel(taller);
+    });
+
     lista.append(item);
   });
+}
+
+function resaltarEnLista(tallerId) {
+  //Primero, removemos la clase de todos los items para quitar cualquier resaltado previo
+  document.querySelectorAll(".tarjeta-taller").forEach((li) => {
+    li.classList.remove("taller-activo");
+  });
+
+  //Buscar el item con el ID específico y resaltarlo
+  const elementoLista = document.getElementById(`item-taller-${tallerId}`);
+
+  if (elementoLista) {
+    elementoLista.classList.add("taller-activo");
+    elementoLista.scrollIntoView({ behavior: "smooth", block: "nearest" });
+  }
 }
 
 export function actualizarMapa(talleresFiltrados) {
@@ -49,13 +75,19 @@ export function actualizarMapa(talleresFiltrados) {
   capaMarcadores.clearLayers();
 
   const marcadores = talleresFiltrados.map((taller) => {
-    const marcador = L.marker([
-      Number(taller.latitud),
-      Number(taller.longitud),
-    ]).addTo(capaMarcadores);
-    marcador.bindPopup(taller.nombreTaller);
-    // Al hacer click en el marcador del mapa, también abro el panel
-    marcador.on("click", () => abrirPanel(taller));
+    const lat = Number(taller.latitud);
+    const lng = Number(taller.longitud);
+    const idUnico = taller.id || taller.nombreTaller.replace(/\s+/g, "-");
+
+    const marcador = L.marker([lat, lng]).addTo(capaMarcadores);
+    marcador.bindPopup(`<strong>${taller.nombreTaller}</strong>`);
+
+    marcador.on("click", () => {
+      miMapa.setView([lat, lng], 16);
+      abrirPanel(taller);
+      resaltarEnLista(idUnico);
+    });
+
     return marcador;
   });
 
@@ -79,7 +111,7 @@ export function configurarSelectorCategorias(rubros) {
     select.appendChild(option);
   });
 }
-// Función que arma y muestra el panel lateral con la info del taller
+// Funcion que arma y muestra el panel lateral con la info del taller
 function abrirPanel(taller) {
   // Busco el panel en el HTML, si no existe lo creo
   let panel = document.getElementById("panel-detalle");
@@ -112,7 +144,7 @@ function abrirPanel(taller) {
   panel.classList.add("panel-abierto");
 }
 
-// Función global para cerrar el panel (la uso desde el botón ✕ en el HTML del panel)
+// Funcion global para cerrar el panel (la uso desde el botón ✕ en el HTML del panel)
 window.cerrarPanel = function () {
   const panel = document.getElementById("panel-detalle");
   if (panel) {
